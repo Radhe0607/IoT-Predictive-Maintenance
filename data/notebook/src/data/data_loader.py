@@ -16,23 +16,27 @@ Note:
     This module is solely responsible for raw data ingestion and basic inspection.
 """
 
-import os
 import logging
 from pathlib import Path
 from typing import Optional, List
 
 import pandas as pd
 
+# ---------------------------------------------------------------------------
+# Centralised configuration
+# ---------------------------------------------------------------------------
+try:
+    from src.configs.config import get_config as _get_config
+    _cfg = _get_config()
+    _DEFAULT_ENCODING  = _cfg.data.encoding
+    _DEFAULT_SEPARATOR = _cfg.data.separator
+except Exception:   # fallback when running module in isolation
+    _DEFAULT_ENCODING  = "utf-8"
+    _DEFAULT_SEPARATOR = ","
 
 # ---------------------------------------------------------------------------
-# Logging configuration
+# Module-level logger
 # ---------------------------------------------------------------------------
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s  [%(levelname)s]  %(name)s — %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
 logger = logging.getLogger(__name__)
 
 
@@ -66,8 +70,8 @@ class DataLoader:
     def __init__(
         self,
         file_path: str | Path,
-        encoding: str = "utf-8",
-        separator: str = ",",
+        encoding:  str = _DEFAULT_ENCODING,
+        separator: str = _DEFAULT_SEPARATOR,
     ) -> None:
         """
         Initialise the DataLoader.

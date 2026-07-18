@@ -50,10 +50,26 @@ import pandas as pd
 # ---------------------------------------------------------------------------
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
 
+import yaml
+
 # ---------------------------------------------------------------------------
 # Module-level logger
 # ---------------------------------------------------------------------------
 logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Centralised configuration defaults
+# ---------------------------------------------------------------------------
+try:
+    from src.configs.config import get_config as _get_cfg
+    _cfg = _get_cfg()
+    _DEFAULT_MODEL_PATH  = f"{_cfg.paths.models_dir}/{_cfg.paths.model_filename}"
+    _DEFAULT_CONF_THRESH = _cfg.evaluation.confidence_threshold
+    _DEFAULT_REPORTS_DIR = _cfg.paths.reports_dir
+except Exception:   # fallback when running module in isolation
+    _DEFAULT_MODEL_PATH  = "outputs/models/random_forest_baseline.joblib"
+    _DEFAULT_CONF_THRESH = 0.50
+    _DEFAULT_REPORTS_DIR = "outputs/reports"
 
 # ---------------------------------------------------------------------------
 # Urgency level colour codes (ANSI — works in terminals & Jupyter)
@@ -255,13 +271,13 @@ class PredictionPipeline:
 
     def __init__(
         self,
-        model_path:       Union[str, Path],
+        model_path:       Union[str, Path]     = _DEFAULT_MODEL_PATH,
         feature_names:    Optional[List[str]]  = None,
         preprocessor:     Optional[Any]        = None,
         feature_engineer: Optional[Any]        = None,
         target_col:       Optional[str]        = None,
         label_map:        Optional[Dict]       = None,
-        confidence_threshold: float            = 0.50,
+        confidence_threshold: float            = _DEFAULT_CONF_THRESH,
     ) -> None:
         """
         Initialise the PredictionPipeline and load the model from disk.

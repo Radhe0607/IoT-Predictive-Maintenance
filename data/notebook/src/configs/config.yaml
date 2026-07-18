@@ -1,0 +1,195 @@
+# =============================================================================
+# IoT Predictive Maintenance — Centralised Configuration
+# =============================================================================
+# All project-wide settings are defined here.
+# Modules import these values through config_loader.py rather than
+# embedding literals directly in source code.
+#
+# Sections:
+#   project          — project identity and global seed
+#   paths            — all input / output directory and file paths
+#   data             — data loading options
+#   preprocessing    — DataPreprocessor defaults
+#   feature_engineering — FeatureEngineer defaults
+#   model            — BaselineModel / RandomForest hyperparameters
+#   evaluation       — ModelEvaluator and EDA options
+#   logging          — logging format and level
+#   plot             — global matplotlib / seaborn aesthetics
+# =============================================================================
+
+
+# ---------------------------------------------------------------------------
+# Project identity
+# ---------------------------------------------------------------------------
+project:
+  name: "IoT Predictive Maintenance"
+  version: "1.0.0"
+  description: "Infotact Solutions — DS & ML Internship baseline pipeline"
+  random_seed: 42          # global seed used across all stochastic operations
+
+
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+# All paths are relative to the project root
+# (i.e., the directory containing this config file).
+# config_loader.py resolves them to absolute paths automatically.
+# ---------------------------------------------------------------------------
+paths:
+  # Raw / processed data
+  raw_data_dir:        "data/raw"
+  processed_data_dir:  "data/processed"
+  raw_data_file:       "data/raw/sensor_data.csv"   # default dataset
+  engineered_data_file: "data/processed/features.csv"
+
+  # Model artifacts
+  models_dir:          "outputs/models"
+  model_filename:      "random_forest_baseline.joblib"   # saved by BaselineModel
+
+  # Visualisation outputs
+  plots_dir:           "outputs/plots"
+
+  # Text / JSON reports
+  reports_dir:         "outputs/reports"
+
+  # Prediction results
+  predictions_output:  "outputs/reports/predictions.csv"
+
+
+# ---------------------------------------------------------------------------
+# Data loading  (DataLoader)
+# ---------------------------------------------------------------------------
+data:
+  encoding:  "utf-8"
+  separator: ","
+
+
+# ---------------------------------------------------------------------------
+# Preprocessing  (DataPreprocessor)
+# ---------------------------------------------------------------------------
+preprocessing:
+  # Column auto-detection: leave as null to infer from dtypes
+  numerical_cols:   null
+  categorical_cols: null
+
+  # Missing-value imputation strategies
+  # numerical:   "median" | "mean" | "zero" | "drop"
+  # categorical: "mode"   | "constant" | "drop"
+  num_fill_strategy:   "median"
+  cat_fill_strategy:   "mode"
+  cat_fill_constant:   "UNKNOWN"
+
+  # Categorical encoding: "label" | "onehot" | "none"
+  cat_encoding: "label"
+
+  # Drop rows where missing fraction exceeds this threshold (0.0 = disabled)
+  drop_missing_thresh: 0.0
+
+  # Apply StandardScaler to numerical columns
+  normalize: true
+
+
+# ---------------------------------------------------------------------------
+# Feature engineering  (FeatureEngineer)
+# ---------------------------------------------------------------------------
+feature_engineering:
+  # Sensor columns to engineer — null = auto-detect from numeric dtypes
+  sensor_cols:    null
+  # Timestamp column for time-based features — null = skip time features
+  timestamp_col:  null
+
+  # Rolling statistics windows (list of integers)
+  rolling_windows: [3, 5, 10]
+
+  # Lag step sizes (list of integers)
+  lag_steps: [1, 3, 5]
+
+  # Maximum auto-generated interaction pairs
+  max_interaction_pairs: 10
+
+  # Feature selection thresholds
+  variance_threshold:    0.01   # columns below this variance are dropped
+  correlation_threshold: 0.95   # one of each pair above this corr is dropped
+
+  # Feature group toggles
+  enable_rolling:      true
+  enable_lags:         true
+  enable_delta:        true
+  enable_interactions: true
+  enable_time:         true
+  enable_selection:    true
+
+  # Output persistence format: "csv" | "parquet"
+  save_format: "csv"
+
+
+# ---------------------------------------------------------------------------
+# Model training  (BaselineModel / RandomForestClassifier)
+# ---------------------------------------------------------------------------
+model:
+  # Name of the target/label column in the dataset
+  target_col: "failure"
+
+  # Train / test split
+  test_size: 0.20          # fraction reserved for testing
+
+  # RandomForestClassifier hyperparameters
+  n_estimators:      200
+  max_depth:         null  # null = unlimited depth
+  min_samples_split: 5
+  min_samples_leaf:  2
+
+  # "balanced" adjusts for class imbalance; null = uniform weights
+  class_weight: "balanced"
+
+
+# ---------------------------------------------------------------------------
+# Evaluation  (ModelEvaluator, cross-validation)
+# ---------------------------------------------------------------------------
+evaluation:
+  # Number of stratified k-fold cross-validation folds
+  cv_folds: 5
+
+  # Scoring metric for cross-validation
+  cv_scoring: "f1_weighted"
+
+  # Minimum confidence score for PredictionPipeline display
+  confidence_threshold: 0.50
+
+  # Top-N features to display in the feature importance chart
+  top_n_features: 20
+
+  # EDA — max numerical columns to plot per figure
+  eda_max_cols_per_figure: 20
+
+  # EDA — histogram bin count
+  eda_hist_bins: 30
+
+  # EDA — max rows sampled for the missingness heatmap
+  eda_missing_heatmap_sample: 300
+
+
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+logging:
+  # Logging level: "DEBUG" | "INFO" | "WARNING" | "ERROR" | "CRITICAL"
+  level: "INFO"
+  format: "%(asctime)s  [%(levelname)s]  %(name)s — %(message)s"
+  datefmt: "%Y-%m-%d %H:%M:%S"
+
+
+# ---------------------------------------------------------------------------
+# Plot aesthetics  (matplotlib / seaborn)
+# ---------------------------------------------------------------------------
+plot:
+  dpi:         150         # figure resolution (dots per inch)
+  style:       "whitegrid" # seaborn style
+  palette:     "muted"     # seaborn colour palette
+  font_scale:  0.95
+
+  title_fontsize:  13
+  label_fontsize:  10
+  tick_fontsize:   8
+  grid_alpha:      0.35
+  spine_colour:    "#CCCCCC"

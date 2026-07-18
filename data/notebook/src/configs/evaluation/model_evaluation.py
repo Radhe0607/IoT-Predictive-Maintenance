@@ -90,6 +90,24 @@ plt.rcParams.update({
 MetricsDict  = Dict[str, float]
 ArrayLike    = Union[np.ndarray, pd.Series, List]
 
+# ---------------------------------------------------------------------------
+# Centralised configuration defaults
+# ---------------------------------------------------------------------------
+try:
+    from src.configs.config import get_config as _get_cfg
+    _cfg = _get_cfg()
+    _D_REPORTS_DIR    = _cfg.paths.reports_dir
+    _D_PLOTS_DIR      = _cfg.paths.plots_dir
+    _D_CV_FOLDS       = _cfg.evaluation.cv_folds
+    _D_CV_SCORING     = _cfg.evaluation.cv_scoring
+    _D_RANDOM_STATE   = _cfg.project.random_seed
+except Exception:   # fallback when running module in isolation
+    _D_REPORTS_DIR    = "outputs/reports"
+    _D_PLOTS_DIR      = "outputs/plots"
+    _D_CV_FOLDS       = 5
+    _D_CV_SCORING     = "f1_weighted"
+    _D_RANDOM_STATE   = 42
+
 
 # ---------------------------------------------------------------------------
 # ModelEvaluator class
@@ -152,8 +170,8 @@ class ModelEvaluator:
     def __init__(
         self,
         model_name:  str            = "Model",
-        reports_dir: Union[str, Path] = "outputs/reports",
-        plots_dir:   Union[str, Path] = "outputs/plots",
+        reports_dir: Union[str, Path] = _D_REPORTS_DIR,
+        plots_dir:   Union[str, Path] = _D_PLOTS_DIR,
     ) -> None:
         """
         Initialise the ModelEvaluator.
@@ -861,7 +879,7 @@ class ModelEvaluator:
             Dict[str, float]: Keys — ``mean``, ``std``, ``min``, ``max``,
                               plus one ``fold_{i}`` per fold.
         """
-        skf    = StratifiedKFold(n_splits=cv, shuffle=True, random_state=42)
+        skf    = StratifiedKFold(n_splits=cv, shuffle=True, random_state=_D_RANDOM_STATE)
         scores = cross_val_score(
             estimator, X, y, cv=skf, scoring=scoring, n_jobs=-1
         )

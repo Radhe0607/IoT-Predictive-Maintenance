@@ -89,6 +89,38 @@ plt.rcParams.update({
 # ---------------------------------------------------------------------------
 MetricsDict = Dict[str, float]
 
+# ---------------------------------------------------------------------------
+# Centralised configuration defaults
+# ---------------------------------------------------------------------------
+try:
+    from src.configs.config import get_config as _get_cfg
+    _cfg = _get_cfg()
+    _D_TARGET_COL        = _cfg.model.target_col
+    _D_TEST_SIZE         = _cfg.model.test_size
+    _D_RANDOM_STATE      = _cfg.project.random_seed
+    _D_N_ESTIMATORS      = _cfg.model.n_estimators
+    _D_MAX_DEPTH         = _cfg.model.max_depth
+    _D_MIN_SAMPLES_SPLIT = _cfg.model.min_samples_split
+    _D_MIN_SAMPLES_LEAF  = _cfg.model.min_samples_leaf
+    _D_CLASS_WEIGHT      = _cfg.model.class_weight
+    _D_MODELS_DIR        = _cfg.paths.models_dir
+    _D_PLOTS_DIR         = _cfg.paths.plots_dir
+    _D_MODEL_FILENAME    = _cfg.paths.model_filename
+    _D_TOP_N             = _cfg.evaluation.top_n_features
+except Exception:   # fallback when running module in isolation
+    _D_TARGET_COL        = "failure"
+    _D_TEST_SIZE         = 0.20
+    _D_RANDOM_STATE      = 42
+    _D_N_ESTIMATORS      = 200
+    _D_MAX_DEPTH         = None
+    _D_MIN_SAMPLES_SPLIT = 5
+    _D_MIN_SAMPLES_LEAF  = 2
+    _D_CLASS_WEIGHT      = "balanced"
+    _D_MODELS_DIR        = "outputs/models"
+    _D_PLOTS_DIR         = "outputs/plots"
+    _D_MODEL_FILENAME    = "random_forest_baseline.joblib"
+    _D_TOP_N             = 20
+
 
 # ---------------------------------------------------------------------------
 # BaselineModel class
@@ -139,16 +171,16 @@ class BaselineModel:
 
     def __init__(
         self,
-        target_col:       str            = "failure",
-        test_size:        float          = 0.20,
-        random_state:     int            = 42,
-        n_estimators:     int            = 200,
-        max_depth:        Optional[int]  = None,
-        min_samples_split: int           = 5,
-        min_samples_leaf:  int           = 2,
-        class_weight:     Optional[str]  = "balanced",
-        models_dir:       Union[str, Path] = "outputs/models",
-        plots_dir:        Union[str, Path] = "outputs/plots",
+        target_col:        str            = _D_TARGET_COL,
+        test_size:         float          = _D_TEST_SIZE,
+        random_state:      int            = _D_RANDOM_STATE,
+        n_estimators:      int            = _D_N_ESTIMATORS,
+        max_depth:         Optional[int]  = _D_MAX_DEPTH,
+        min_samples_split: int            = _D_MIN_SAMPLES_SPLIT,
+        min_samples_leaf:  int            = _D_MIN_SAMPLES_LEAF,
+        class_weight:      Optional[str]  = _D_CLASS_WEIGHT,
+        models_dir:        Union[str, Path] = _D_MODELS_DIR,
+        plots_dir:         Union[str, Path] = _D_PLOTS_DIR,
     ) -> None:
         """
         Initialise the BaselineModel.
@@ -472,7 +504,7 @@ class BaselineModel:
 
     def save_model(
         self,
-        filename: str = "random_forest_baseline.joblib",
+        filename: str = _D_MODEL_FILENAME,
     ) -> Path:
         """
         Serialise the fitted Random Forest model to disk using joblib.
@@ -736,7 +768,7 @@ class BaselineModel:
     def run_full_pipeline(
         self,
         df: pd.DataFrame,
-        top_n_features: int = 20,
+        top_n_features: int = _D_TOP_N,
     ) -> MetricsDict:
         """
         Convenience method — runs the complete modelling pipeline in one call.

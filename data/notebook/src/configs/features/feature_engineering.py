@@ -45,8 +45,29 @@ logger = logging.getLogger(__name__)
 # Type aliases
 # ---------------------------------------------------------------------------
 
-# Column lists that the caller may optionally pre-specify
 ColList = List[str]
+
+# ---------------------------------------------------------------------------
+# Centralised configuration defaults
+# ---------------------------------------------------------------------------
+try:
+    from src.configs.config import get_config as _get_cfg
+    _cfg = _get_cfg()
+    _D_ROLLING_WINDOWS   = _cfg.feature_engineering.rolling_windows
+    _D_LAG_STEPS         = _cfg.feature_engineering.lag_steps
+    _D_MAX_PAIRS         = _cfg.feature_engineering.max_interaction_pairs
+    _D_VAR_THRESH        = _cfg.feature_engineering.variance_threshold
+    _D_CORR_THRESH       = _cfg.feature_engineering.correlation_threshold
+    _D_SAVE_FORMAT       = _cfg.feature_engineering.save_format
+    _D_ENG_DATA_FILE     = _cfg.paths.engineered_data_file
+except Exception:   # fallback when running module in isolation
+    _D_ROLLING_WINDOWS   = [3, 5, 10]
+    _D_LAG_STEPS         = [1, 3, 5]
+    _D_MAX_PAIRS         = 10
+    _D_VAR_THRESH        = 0.01
+    _D_CORR_THRESH       = 0.95
+    _D_SAVE_FORMAT       = "csv"
+    _D_ENG_DATA_FILE     = "data/processed/features.csv"
 
 # Supported output formats for save()
 SaveFormat = Literal["csv", "parquet"]
@@ -126,9 +147,9 @@ class FeatureEngineer:
         rolling_windows:        Optional[List[int]]        = None,
         lag_steps:              Optional[List[int]]        = None,
         interaction_pairs:      Optional[List[Tuple[str, str]]] = None,
-        max_interaction_pairs:  int                        = 10,
-        variance_threshold:     float                      = 0.01,
-        correlation_threshold:  float                      = 0.95,
+        max_interaction_pairs:  int                        = _D_MAX_PAIRS,
+        variance_threshold:     float                      = _D_VAR_THRESH,
+        correlation_threshold:  float                      = _D_CORR_THRESH,
         enable_rolling:         bool                       = True,
         enable_lags:            bool                       = True,
         enable_delta:           bool                       = True,
@@ -179,8 +200,8 @@ class FeatureEngineer:
         # User-supplied configuration
         self.sensor_cols:           Optional[ColList]               = sensor_cols
         self.timestamp_col:         Optional[str]                   = timestamp_col
-        self.rolling_windows:       List[int]                       = rolling_windows or [3, 5, 10]
-        self.lag_steps:             List[int]                       = lag_steps       or [1, 3, 5]
+        self.rolling_windows:       List[int]                       = rolling_windows or _D_ROLLING_WINDOWS
+        self.lag_steps:             List[int]                       = lag_steps       or _D_LAG_STEPS
         self.interaction_pairs:     Optional[List[Tuple[str, str]]] = interaction_pairs
         self.max_interaction_pairs: int                             = max_interaction_pairs
         self.variance_threshold:    float                           = variance_threshold

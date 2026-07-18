@@ -48,6 +48,24 @@ warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
+# Centralised configuration defaults
+# ---------------------------------------------------------------------------
+try:
+    from src.configs.config import get_config as _get_cfg
+    _cfg = _get_cfg()
+    _DEFAULT_PLOTS_DIR    = _cfg.paths.plots_dir
+    _DEFAULT_RANDOM_STATE = _cfg.project.random_seed
+    _DEFAULT_MAX_COLS     = _cfg.evaluation.eda_max_cols_per_figure
+    _DEFAULT_HIST_BINS    = _cfg.evaluation.eda_hist_bins
+    _DEFAULT_SAMPLE_ROWS  = _cfg.evaluation.eda_missing_heatmap_sample
+except Exception:   # fallback when running module in isolation
+    _DEFAULT_PLOTS_DIR    = "outputs/plots"
+    _DEFAULT_RANDOM_STATE = 42
+    _DEFAULT_MAX_COLS     = 20
+    _DEFAULT_HIST_BINS    = 30
+    _DEFAULT_SAMPLE_ROWS  = 300
+
+# ---------------------------------------------------------------------------
 # Global aesthetic defaults
 # ---------------------------------------------------------------------------
 _PALETTE      = "muted"          # seaborn colour palette
@@ -107,7 +125,7 @@ class EDAAnalyser:
     def __init__(
         self,
         df:         pd.DataFrame,
-        plots_dir:  Union[str, Path] = "outputs/plots",
+        plots_dir:  Union[str, Path] = _DEFAULT_PLOTS_DIR,
         target_col: Optional[str]    = None,
     ) -> None:
         """
@@ -340,8 +358,8 @@ class EDAAnalyser:
 
         # ── Panel 2: Heatmap (sample up to 300 rows for clarity) ─────────
         sample = df[missing_cols.index].isna().astype(int)
-        if len(sample) > 300:
-            sample = sample.sample(300, random_state=42)
+        if len(sample) > _DEFAULT_SAMPLE_ROWS:
+            sample = sample.sample(_DEFAULT_SAMPLE_ROWS, random_state=_DEFAULT_RANDOM_STATE)
 
         sns.heatmap(
             sample.T,
