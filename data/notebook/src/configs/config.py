@@ -488,3 +488,18 @@ def display_config(cfg: Optional["ProjectConfig"] = None) -> None:
             print(f"    {f.name:<30} {val}")
 
     print(f"\n{sep2}\n")
+
+def validate_config(config):
+
+    required = [
+        "DATA_PATH",
+        "MODEL_PATH",
+        "OUTPUT_PATH"
+    ]
+
+    for item in required:
+
+        if item not in config:
+            raise ValueError(f"{item} is missing!")
+
+    print("Configuration is valid.")
