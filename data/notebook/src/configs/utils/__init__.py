@@ -16,8 +16,22 @@ Exports:
                          PredictionPipeline.predict* call; exposes
                          .predictions, .probabilities, .confidence,
                          and .to_dataframe().
+
+    save_model         — persist any joblib-serialisable model to disk;
+                         wraps joblib.dump with directory auto-creation,
+                         atomic temp-file writes, and structured logging.
+
+    load_model         — deserialise a saved model artifact from disk;
+                         raises an informative FileNotFoundError when the
+                         file is absent (instead of an opaque IOError).
 """
 
 from .predict import PredictionPipeline, PredictionResult
+from .model_manager import save_model, load_model
 
-__all__ = ["PredictionPipeline", "PredictionResult"]
+__all__ = [
+    "PredictionPipeline",
+    "PredictionResult",
+    "save_model",
+    "load_model",
+]

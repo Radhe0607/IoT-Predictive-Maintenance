@@ -39,6 +39,12 @@ from pathlib import Path
 from typing import Dict, List, Literal, Optional, Tuple, Union
 
 import joblib
+
+# Model-persistence utility (single source of truth for save / load)
+from src.configs.utils.model_manager import (
+    load_model as _util_load_model,
+    save_model as _util_save_model,
+)
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import numpy as np
@@ -527,7 +533,11 @@ class BaselineModel:
         self._require_trained()
 
         model_path = self.models_dir / filename
-        joblib.dump(self.model, model_path)
+
+        # ── Delegate serialisation to the shared model-manager utility ────
+        # _util_save_model handles directory creation, atomic temp-file write,
+        # and structured logging so this method stays focused on orchestration.
+        _util_save_model(self.model, model_path)
         self._saved_model_path = model_path
 
         # ── Write companion metadata file ─────────────────────────────────
@@ -552,11 +562,10 @@ class BaselineModel:
             for feat in self.feature_names:
                 fh.write(f"  {feat}\n")
 
-        print(f"\n  ✓ Model saved   → {model_path}")
         print(f"  ✓ Metadata saved → {meta_path}\n")
         logger.info(
-            "Model serialised to %s  [%.1f KB].",
-            model_path, model_path.stat().st_size / 1024,
+            "Companion metadata written to %s.",
+            meta_path,
         )
         return model_path
 
@@ -568,6 +577,10 @@ class BaselineModel:
         This is a convenience class-method; it returns the raw sklearn
         estimator rather than a full BaselineModel instance.
 
+        Internally delegates to :func:`src.configs.utils.model_manager.load_model`
+        so that all loading logic (path validation, error messages, logging)
+        is handled in one place.
+
         Args:
             model_path (str | Path): Path to the ``.joblib`` file.
 
@@ -577,13 +590,10 @@ class BaselineModel:
         Raises:
             FileNotFoundError: If *model_path* does not exist.
         """
-        path = Path(model_path).resolve()
-        if not path.exists():
-            raise FileNotFoundError(
-                f"Model file not found: '{path}'."
-            )
-        estimator = joblib.load(path)
-        logger.info("Model loaded from %s.", path)
+        # Delegate to the shared utility — it raises FileNotFoundError with a
+        # clear message if the path does not exist.
+        estimator = _util_load_model(model_path)
+        logger.info("Model loaded via model_manager from '%s'.", Path(model_path).resolve())
         return estimator
 
     # ------------------------------------------------------------------
