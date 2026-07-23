@@ -1,10 +1,22 @@
 """
-src/pipeline/__init__.py
-========================
-Exposes the public interface of the prediction pipeline sub-package.
+src/configs/utils/__init__.py
+==============================
+Exposes the public interface of the project utility sub-package.
+
+.. note::
+    **Canonical inference location has moved.**
+
+    The dedicated, first-class inference module for this project is now
+    ``src.configs.inference``.  For new code, prefer importing from there::
+
+        from src.configs.inference import InferencePipeline, InferenceResult, run_inference
+
+    The symbols below (``PredictionPipeline``, ``PredictionResult``) are
+    retained in this module for **backward-compatibility** and will continue
+    to work without any changes to existing call sites.
 
 Exports:
-    PredictionPipeline — end-to-end inference orchestrator:
+    PredictionPipeline — end-to-end inference orchestrator (back-compat):
                          loads a trained model, accepts raw sensor data
                          (CSV, DataFrame, or single dict), applies optional
                          preprocessing / feature engineering, generates
