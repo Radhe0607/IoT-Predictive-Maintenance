@@ -1,0 +1,39 @@
+==============================================================================
+  PREDICTIVE MAINTENANCE INFERENCE REPORT
+==============================================================================
+  Report ID   : REP-0485DC41
+  Timestamp   : 2026-07-25T22:27:44
+  Model Name  : RF_Baseline
+  Model Type  : RandomForestClassifier
+------------------------------------------------------------------------------
+
+1. PREDICTION SUMMARY
+------------------------------------------------------------------------------
+  Total Samples Predicted : 3
+  Confidence Threshold   : 50%
+  High Confidence Samples : 3 (100.0%)
+  Low Confidence Samples  : 0 (0.0%)
+  Confidence Stats        : Min=75.0% | Mean=81.7% | Max=90.0%
+
+  Class Distribution:
+    - Class 0    [NORMAL                   ] :      1 samples ( 33.3%)
+    - Class 1    [MAINTENANCE REQUIRED     ] :      1 samples ( 33.3%)
+    - Class 2    [CRITICAL - IMMEDIATE ACTION] :      1 samples ( 33.3%)
+
+2. MAINTENANCE URGENCY BREAKDOWN
+------------------------------------------------------------------------------
+  * NORMAL                           :      1 samples ( 33.3%)
+    Action: Monitor
+  * MAINTENANCE REQUIRED             :      1 samples ( 33.3%)
+    Action: Inspect
+  * CRITICAL - IMMEDIATE ACTION      :      1 samples ( 33.3%)
+    Action: Stop Machine
+
+4. CRITICAL RISK ALERTS & LOW CONFIDENCE WARNINGS
+------------------------------------------------------------------------------
+  [Sample #1] Pred=1 | Conf=75.0% | Urgency=MAINTENANCE REQUIRED
+  [Sample #2] Pred=2 | Conf=80.0% | Urgency=CRITICAL - IMMEDIATE ACTION
+
+==============================================================================
+  END OF REPORT
+==============================================================================

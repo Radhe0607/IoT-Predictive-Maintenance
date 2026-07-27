@@ -1,0 +1,66 @@
+==============================================================================
+  PREDICTIVE MAINTENANCE INFERENCE REPORT
+==============================================================================
+  Report ID   : REP-08680564
+  Timestamp   : 2026-07-25T22:27:04
+------------------------------------------------------------------------------
+
+1. PREDICTION SUMMARY
+------------------------------------------------------------------------------
+  Total Samples Predicted : 10
+  Confidence Threshold   : 50%
+  High Confidence Samples : 10 (100.0%)
+  Low Confidence Samples  : 0 (0.0%)
+  Confidence Stats        : Min=60.0% | Mean=80.5% | Max=95.0%
+
+  Class Distribution:
+    - Class 0    [NORMAL                   ] :      6 samples ( 60.0%)
+    - Class 1    [MAINTENANCE REQUIRED     ] :      3 samples ( 30.0%)
+    - Class 2    [CRITICAL — IMMEDIATE ACTION] :      1 samples ( 10.0%)
+
+2. MAINTENANCE URGENCY BREAKDOWN
+------------------------------------------------------------------------------
+  * NORMAL                           :      6 samples ( 60.0%)
+    Action: No maintenance required. Continue normal monitoring.
+  * MAINTENANCE REQUIRED             :      3 samples ( 30.0%)
+    Action: Schedule preventive maintenance. Inspect components, lubricate moving parts, and verify sensor calibration.
+  * CRITICAL — IMMEDIATE ACTION      :      1 samples ( 10.0%)
+    Action: STOP MACHINE IMMEDIATELY. Critical failure risk detected. Full inspection and component replacement required.
+
+3. MODEL EVALUATION METRICS
+------------------------------------------------------------------------------
+  - accuracy                  : 0.9000 (90.00%)
+  - precision_macro           : 0.9444 (94.44%)
+  - precision_weighted        : 0.9167 (91.67%)
+  - recall_macro              : 0.9167 (91.67%)
+  - recall_weighted           : 0.9000 (90.00%)
+  - f1_macro                  : 0.9221 (92.21%)
+  - f1_weighted               : 0.8974 (89.74%)
+
+  Confusion Matrix:
+    [5, 0, 0]
+    [1, 3, 0]
+    [0, 0, 1]
+
+  Classification Report:
+                  precision    recall  f1-score   support
+    
+               0       0.83      1.00      0.91         5
+               1       1.00      0.75      0.86         4
+               2       1.00      1.00      1.00         1
+    
+        accuracy                           0.90        10
+       macro avg       0.94      0.92      0.92        10
+    weighted avg       0.92      0.90      0.90        10
+    
+
+4. CRITICAL RISK ALERTS & LOW CONFIDENCE WARNINGS
+------------------------------------------------------------------------------
+  [Sample #2] Pred=1 | Conf=70.0% | Urgency=MAINTENANCE REQUIRED
+  [Sample #4] Pred=2 | Conf=70.0% | Urgency=CRITICAL — IMMEDIATE ACTION
+  [Sample #5] Pred=1 | Conf=60.0% | Urgency=MAINTENANCE REQUIRED
+  [Sample #9] Pred=1 | Conf=75.0% | Urgency=MAINTENANCE REQUIRED
+
+==============================================================================
+  END OF REPORT
+==============================================================================

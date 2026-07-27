@@ -1,0 +1,109 @@
+{
+  "report_id": "REP-0485DC41",
+  "timestamp": "2026-07-25T22:27:44",
+  "title": "Predictive Maintenance Inference Report",
+  "metadata": {
+    "model_name": "RF_Baseline",
+    "model_type": "RandomForestClassifier"
+  },
+  "prediction_summary": {
+    "total_samples": 3,
+    "confidence_threshold": 0.5,
+    "high_confidence_count": 3,
+    "high_confidence_pct": 100.0,
+    "low_confidence_count": 0,
+    "low_confidence_pct": 0.0,
+    "confidence_stats": {
+      "min": 0.75,
+      "max": 0.9,
+      "mean": 0.8167,
+      "std": 0.0624
+    },
+    "class_distribution": {
+      "0": {
+        "count": 1,
+        "pct": 33.33,
+        "urgency": "NORMAL",
+        "action": "Monitor"
+      },
+      "1": {
+        "count": 1,
+        "pct": 33.33,
+        "urgency": "MAINTENANCE REQUIRED",
+        "action": "Inspect"
+      },
+      "2": {
+        "count": 1,
+        "pct": 33.33,
+        "urgency": "CRITICAL - IMMEDIATE ACTION",
+        "action": "Stop Machine"
+      }
+    },
+    "critical_alerts": [
+      {
+        "sample_id": 1,
+        "prediction": 1,
+        "confidence": 0.75,
+        "urgency": "MAINTENANCE REQUIRED",
+        "reason": "CRITICAL_RISK"
+      },
+      {
+        "sample_id": 2,
+        "prediction": 2,
+        "confidence": 0.8,
+        "urgency": "CRITICAL - IMMEDIATE ACTION",
+        "reason": "CRITICAL_RISK"
+      }
+    ]
+  },
+  "urgency_summary": {
+    "NORMAL": {
+      "count": 1,
+      "pct": 33.33,
+      "action": "Monitor"
+    },
+    "MAINTENANCE REQUIRED": {
+      "count": 1,
+      "pct": 33.33,
+      "action": "Inspect"
+    },
+    "CRITICAL - IMMEDIATE ACTION": {
+      "count": 1,
+      "pct": 33.33,
+      "action": "Stop Machine"
+    }
+  },
+  "evaluation_metrics": null,
+  "sample_details": [
+    {
+      "sample_id": 0,
+      "prediction": 0,
+      "confidence": 0.9,
+      "urgency": "NORMAL",
+      "action": "Monitor",
+      "prob_class_0": 0.9,
+      "prob_class_1": 0.1,
+      "prob_class_2": 0.0
+    },
+    {
+      "sample_id": 1,
+      "prediction": 1,
+      "confidence": 0.75,
+      "urgency": "MAINTENANCE REQUIRED",
+      "action": "Inspect",
+      "prob_class_0": 0.2,
+      "prob_class_1": 0.75,
+      "prob_class_2": 0.05
+    },
+    {
+      "sample_id": 2,
+      "prediction": 2,
+      "confidence": 0.8,
+      "urgency": "CRITICAL - IMMEDIATE ACTION",
+      "action": "Stop Machine",
+      "prob_class_0": 0.05,
+      "prob_class_1": 0.15,
+      "prob_class_2": 0.8
+    }
+  ]
+}
