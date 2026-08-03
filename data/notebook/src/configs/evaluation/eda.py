@@ -29,7 +29,7 @@ Note:
 import logging
 import warnings
 from pathlib import Path
-from typing import List, Literal, Optional, Tuple, Union
+from typing import List, Literal, Optional, Union
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker

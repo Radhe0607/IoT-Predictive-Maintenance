@@ -36,7 +36,7 @@ Note:
 import logging
 import warnings
 from pathlib import Path
-from typing import Dict, List, Literal, Optional, Tuple, Union
+from typing import Dict, List, Optional, Union
 
 import joblib
 
@@ -46,7 +46,6 @@ from src.configs.utils.model_manager import (
     save_model as _util_save_model,
 )
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 import seaborn as sns
