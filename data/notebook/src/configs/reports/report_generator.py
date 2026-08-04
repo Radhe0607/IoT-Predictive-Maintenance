@@ -91,7 +91,8 @@ try:
     _DEFAULT_REPORTS_DIR = str(get_absolute_path(_cfg.paths.reports_dir))
     _DEFAULT_CONF_THRESH = _cfg.evaluation.confidence_threshold
 
-except Exception:  # Fallback when running module in isolation
+except (ImportError, AttributeError, FileNotFoundError) as exc:  # Fallback when running module in isolation
+    logger.debug("Config singleton unavailable, using defaults: %s", exc)
     _DEFAULT_REPORTS_DIR = "outputs/reports"
     _DEFAULT_CONF_THRESH = 0.50
 
@@ -306,7 +307,6 @@ class PredictiveMaintenanceReport:
                 json.dump(self.to_dict(), fh, indent=2, default=str)
             size_kb = file_path.stat().st_size / 1024
             logger.info("Saved JSON report -> '%s' [%.1f KB]", file_path, size_kb)
-            print(f"  [OK] JSON Report saved -> {file_path} ({size_kb:.1f} KB)")
             return file_path
         except Exception as exc:
             logger.error("Failed to save JSON report to '%s': %s", file_path, exc)
@@ -330,7 +330,6 @@ class PredictiveMaintenanceReport:
                 fh.write(txt_content)
             size_kb = file_path.stat().st_size / 1024
             logger.info("Saved TXT report -> '%s' [%.1f KB]", file_path, size_kb)
-            print(f"  [OK] TXT Report saved -> {file_path} ({size_kb:.1f} KB)")
             return file_path
         except Exception as exc:
             logger.error("Failed to save TXT report to '%s': %s", file_path, exc)

@@ -66,7 +66,8 @@ try:
     _DEFAULT_MODEL_PATH  = f"{_cfg.paths.models_dir}/{_cfg.paths.model_filename}"
     _DEFAULT_CONF_THRESH = _cfg.evaluation.confidence_threshold
     _DEFAULT_REPORTS_DIR = _cfg.paths.reports_dir
-except Exception:   # fallback when running module in isolation
+except (ImportError, AttributeError, FileNotFoundError) as exc:   # fallback when running module in isolation
+    logger.debug("Config singleton unavailable, using defaults: %s", exc)
     _DEFAULT_MODEL_PATH  = "outputs/models/random_forest_baseline.joblib"
     _DEFAULT_CONF_THRESH = 0.50
     _DEFAULT_REPORTS_DIR = "outputs/reports"
@@ -761,7 +762,6 @@ class PredictionPipeline:
                 json.dump(payload, fh, indent=2, default=str)
 
         size_kb = output_path.stat().st_size / 1024
-        print(f"\n  ✓ Results saved → {output_path}  ({size_kb:.1f} KB)")
         logger.info("Prediction results saved → %s  [%.1f KB].", output_path, size_kb)
         return output_path
 
@@ -842,7 +842,6 @@ class PredictionPipeline:
             "Model loaded from '%s'  [%.1f KB, type=%s].",
             path, size_kb, type(model).__name__,
         )
-        print(f"  ✓ Model loaded — {path.name}  ({size_kb:.1f} KB)")
         return model
 
     @staticmethod

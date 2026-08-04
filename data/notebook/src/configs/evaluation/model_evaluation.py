@@ -34,7 +34,7 @@ import logging
 import warnings
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -101,7 +101,8 @@ try:
     _D_CV_FOLDS       = _cfg.evaluation.cv_folds
     _D_CV_SCORING     = _cfg.evaluation.cv_scoring
     _D_RANDOM_STATE   = _cfg.project.random_seed
-except Exception:   # fallback when running module in isolation
+except (ImportError, AttributeError, FileNotFoundError) as exc:   # fallback when running module in isolation
+    logger.debug("Config singleton unavailable, using defaults: %s", exc)
     _D_REPORTS_DIR    = "outputs/reports"
     _D_PLOTS_DIR      = "outputs/plots"
     _D_CV_FOLDS       = 5
@@ -557,11 +558,8 @@ class ModelEvaluator:
             fh.write(f"\n{sep}\n")
 
         self._saved_reports.extend([json_path, txt_path])
-
-        print(f"  ✓ JSON metrics → {json_path}")
-        print(f"  ✓ TXT report   → {txt_path}")
         logger.info(
-            "Reports saved: JSON=%s, TXT=%s.", json_path, txt_path
+            "Reports saved successfully — JSON: %s | TXT: %s", json_path, txt_path
         )
         return json_path, txt_path
 

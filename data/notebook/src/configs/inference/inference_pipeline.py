@@ -104,7 +104,8 @@ try:
     _DEFAULT_TARGET_COL   = _cfg.model.target_col
     _DEFAULT_PRED_OUTPUT  = str(get_absolute_path(_cfg.paths.predictions_output))
 
-except Exception:
+except (ImportError, AttributeError, FileNotFoundError) as exc:
+    logger.debug("Config singleton unavailable, using defaults: %s", exc)
     _DEFAULT_MODEL_PATH  = "outputs/models/random_forest_baseline.joblib"
     _DEFAULT_CONF_THRESH  = 0.50
     _DEFAULT_REPORTS_DIR  = "outputs/reports"
@@ -1034,12 +1035,10 @@ class InferencePipeline:
             logger.error("Failed to save results to '%s': %s", output_path, exc)
             raise
 
-        size_kb = output_path.stat().st_size / 1024
         logger.info(
             "Inference results saved → '%s'  [%.1f KB, fmt=%s].",
             output_path, size_kb, fmt,
         )
-        print(f"\n  ✓ Results saved → {output_path}  ({size_kb:.1f} KB)")
         return output_path
 
     # ==================================================================
@@ -1141,7 +1140,6 @@ class InferencePipeline:
                 "Model loaded from '%s'  [%.1f KB, type=%s].",
                 path, size_kb, type(model).__name__,
             )
-            print(f"  ✓ Model loaded — {path.name}  ({size_kb:.1f} KB)")
             return model
         except FileNotFoundError:
             raise

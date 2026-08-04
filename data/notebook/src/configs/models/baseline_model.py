@@ -38,8 +38,6 @@ import warnings
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-import joblib
-
 # Model-persistence utility (single source of truth for save / load)
 from src.configs.utils.model_manager import (
     load_model as _util_load_model,
@@ -51,7 +49,6 @@ import pandas as pd
 import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
-    ConfusionMatrixDisplay,
     accuracy_score,
     classification_report,
     confusion_matrix,
@@ -112,7 +109,8 @@ try:
     _D_PLOTS_DIR         = _cfg.paths.plots_dir
     _D_MODEL_FILENAME    = _cfg.paths.model_filename
     _D_TOP_N             = _cfg.evaluation.top_n_features
-except Exception:   # fallback when running module in isolation
+except (ImportError, AttributeError, FileNotFoundError) as exc:   # fallback when running module in isolation
+    logger.debug("Config singleton unavailable, using defaults: %s", exc)
     _D_TARGET_COL        = "failure"
     _D_TEST_SIZE         = 0.20
     _D_RANDOM_STATE      = 42
@@ -561,7 +559,6 @@ class BaselineModel:
             for feat in self.feature_names:
                 fh.write(f"  {feat}\n")
 
-        print(f"  ✓ Metadata saved → {meta_path}\n")
         logger.info(
             "Companion metadata written to %s.",
             meta_path,

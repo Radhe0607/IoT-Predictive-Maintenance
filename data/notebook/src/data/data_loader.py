@@ -30,7 +30,8 @@ try:
     _cfg = _get_config()
     _DEFAULT_ENCODING  = _cfg.data.encoding
     _DEFAULT_SEPARATOR = _cfg.data.separator
-except Exception:   # fallback when running module in isolation
+except (ImportError, AttributeError, FileNotFoundError) as exc:   # fallback when running module in isolation
+    logger.debug("Config singleton unavailable, using defaults: %s", exc)
     _DEFAULT_ENCODING  = "utf-8"
     _DEFAULT_SEPARATOR = ","
 

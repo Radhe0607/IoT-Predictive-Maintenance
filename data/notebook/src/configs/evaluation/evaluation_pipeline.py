@@ -90,7 +90,8 @@ try:
     _DEFAULT_CV_FOLDS     = _cfg.evaluation.cv_folds
     _DEFAULT_CV_SCORING   = _cfg.evaluation.cv_scoring
 
-except Exception:  # fallback when running module in isolation
+except (ImportError, AttributeError, FileNotFoundError) as exc:  # fallback when running module in isolation
+    logger.debug("Config singleton unavailable, using defaults: %s", exc)
     _DEFAULT_MODEL_PATH   = "outputs/models/random_forest_baseline.joblib"
     _DEFAULT_DATA_PATH    = "data/processed/features.csv"
     _DEFAULT_TARGET_COL   = "failure"
@@ -255,9 +256,8 @@ class EvaluationPipeline:
                         f"Model file not found: '{p}'.\n"
                         "Ensure the training pipeline has been run."
                     )
-                model = joblib.load(p)
                 size_kb = p.stat().st_size / 1024
-                print(f"  ✓ Model loaded ← {p.name}  ({size_kb:.1f} KB)")
+                logger.info("Model artifact loaded from '%s' (%.1f KB).", p.name, size_kb)
                 return model
 
         path = Path(model_path).resolve() if model_path else self.model_path
@@ -384,14 +384,9 @@ class EvaluationPipeline:
         self.y_test = y_test.reset_index(drop=True)
 
         logger.info(
-            "Test split extracted — %d samples, %d features, "
-            "target='%s', classes=%s.",
+            "Test split loaded — %d samples, %d features, target='%s', classes=%s.",
             len(self.X_test), self.X_test.shape[1],
             col, list(y_test.unique()),
-        )
-        print(
-            f"  ✓ Test data loaded — {len(self.X_test):,} samples × "
-            f"{self.X_test.shape[1]:,} features  (target='{col}')"
         )
         return self
 
@@ -450,13 +445,8 @@ class EvaluationPipeline:
             self.y_prob = None
 
         logger.info(
-            "Predictions generated — %d hard predictions, "
-            "probabilities=%s.",
+            "Predictions generated — %d predictions generated (probabilities=%s).",
             len(self.y_pred), self.y_prob is not None,
-        )
-        print(
-            f"  ✓ Predictions generated — {len(self.y_pred):,} samples  "
-            f"(probabilities: {'yes' if self.y_prob is not None else 'no'})"
         )
         return self
 

@@ -67,7 +67,8 @@ try:
 
     _cfg = _get_cfg()
     DEFAULT_MODELS_DIR: str = _cfg.paths.models_dir   # e.g. "outputs/models"
-except Exception:
+except (ImportError, AttributeError, FileNotFoundError) as exc:
+    logger.debug("Config singleton unavailable, using defaults: %s", exc)
     DEFAULT_MODELS_DIR = "outputs/models"
 
 
@@ -170,8 +171,6 @@ def save_model(
         "Model saved → '%s'  [%.1f KB, compress=%d, type=%s].",
         dest, size_kb, compress, type(model).__name__,
     )
-    print(f"  [OK] Model saved -> {dest}  ({size_kb:.1f} KB)")
-
     return dest
 
 
@@ -225,6 +224,4 @@ def load_model(file_path: Union[str, Path]) -> Any:
         "Model loaded ← '%s'  [%.1f KB, type=%s].",
         src, size_kb, type(model).__name__,
     )
-    print(f"  [OK] Model loaded <- {src.name}  ({size_kb:.1f} KB)")
-
     return model

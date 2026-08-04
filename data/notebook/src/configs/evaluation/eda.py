@@ -58,7 +58,8 @@ try:
     _DEFAULT_MAX_COLS     = _cfg.evaluation.eda_max_cols_per_figure
     _DEFAULT_HIST_BINS    = _cfg.evaluation.eda_hist_bins
     _DEFAULT_SAMPLE_ROWS  = _cfg.evaluation.eda_missing_heatmap_sample
-except Exception:   # fallback when running module in isolation
+except (ImportError, AttributeError, FileNotFoundError) as exc:   # fallback when running module in isolation
+    logger.debug("Config singleton unavailable, using defaults: %s", exc)
     _DEFAULT_PLOTS_DIR    = "outputs/plots"
     _DEFAULT_RANDOM_STATE = 42
     _DEFAULT_MAX_COLS     = 20
@@ -450,8 +451,8 @@ class EDAAnalyser:
             )
             try:
                 series.plot.kde(ax=ax, color=colour, linewidth=2)
-            except Exception:
-                pass  # KDE may fail for near-constant columns
+            except Exception as exc:
+                logger.debug("KDE computation skipped for column '%s': %s", col, exc)
 
             # Mean & median markers
             mean_val   = series.mean()
@@ -737,8 +738,8 @@ class EDAAnalyser:
                     color="#457B9D", alpha=0.6, edgecolor="white")
             try:
                 series_clean.plot.kde(ax=ax, color="#E63946", linewidth=2)
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.debug("KDE computation skipped for target '%s': %s", col, exc)
             ax.set_xlabel(col, fontsize=_LABEL_SIZE)
             ax.set_ylabel("Density", fontsize=_LABEL_SIZE)
             ax.set_title(

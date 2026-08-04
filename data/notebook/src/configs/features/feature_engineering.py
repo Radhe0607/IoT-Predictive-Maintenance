@@ -60,7 +60,8 @@ try:
     _D_CORR_THRESH       = _cfg.feature_engineering.correlation_threshold
     _D_SAVE_FORMAT       = _cfg.feature_engineering.save_format
     _D_ENG_DATA_FILE     = _cfg.paths.engineered_data_file
-except Exception:   # fallback when running module in isolation
+except (ImportError, AttributeError, FileNotFoundError) as exc:   # fallback when running module in isolation
+    logger.debug("Config singleton unavailable, using defaults: %s", exc)
     _D_ROLLING_WINDOWS   = [3, 5, 10]
     _D_LAG_STEPS         = [1, 3, 5]
     _D_MAX_PAIRS         = 10
@@ -410,10 +411,6 @@ class FeatureEngineer:
         logger.info(
             "Engineered dataset saved → %s  [%d rows × %d cols, format=%s].",
             output_path, df.shape[0], df.shape[1], fmt,
-        )
-        print(
-            f"  ✓ Saved engineered dataset → {output_path}\n"
-            f"    [{df.shape[0]:,} rows × {df.shape[1]:,} cols | format={fmt}]"
         )
         return output_path
 
