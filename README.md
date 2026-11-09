@@ -243,7 +243,7 @@ Execute end-to-end model inference on raw sensor data:
 from src.configs.inference import run_inference
 
 # Run inference on input data (CSV path, DataFrame, or dict)
-result = run_inference("data/raw/sensor_readings.csv")
+result = run_inference("data/raw/sensor_data.csv")
 
 # Display formatted results summary
 result.display()
