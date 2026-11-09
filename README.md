@@ -242,6 +242,8 @@ From the repository root, train and run a baseline on the included **synthetic d
 ```bash
 cd data/notebook
 python train_demo.py
+# Run from data/notebook with a CSV and target column
+python train_demo.py --data data/raw/sensor_data.csv --target failure --model-dir models
 ```
 
 Then execute model inference on the sample sensor data:
