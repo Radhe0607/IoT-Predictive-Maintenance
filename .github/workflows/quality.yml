@@ -21,6 +21,9 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - run: python -m compileall -q src
         working-directory: data/notebook
-      - name: Train sample baseline
-        run: python train_demo.py
+      - name: Check demo CLI options
+        run: python train_demo.py --help
+        working-directory: data/notebook
+      - name: Train sample baseline with explicit CLI options
+        run: python train_demo.py --data data/raw/sensor_data.csv --target failure --model-dir /tmp/iot-model-smoke
         working-directory: data/notebook
