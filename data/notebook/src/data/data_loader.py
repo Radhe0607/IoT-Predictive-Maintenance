@@ -22,6 +22,8 @@ from typing import Optional, List
 
 import pandas as pd
 
+logger = logging.getLogger(__name__)
+
 # ---------------------------------------------------------------------------
 # Centralised configuration
 # ---------------------------------------------------------------------------
@@ -34,12 +36,6 @@ except (ImportError, AttributeError, FileNotFoundError) as exc:   # fallback whe
     logger.debug("Config singleton unavailable, using defaults: %s", exc)
     _DEFAULT_ENCODING  = "utf-8"
     _DEFAULT_SEPARATOR = ","
-
-# ---------------------------------------------------------------------------
-# Module-level logger
-# ---------------------------------------------------------------------------
-logger = logging.getLogger(__name__)
-
 
 # ---------------------------------------------------------------------------
 # DataLoader class
