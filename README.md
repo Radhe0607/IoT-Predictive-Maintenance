@@ -237,7 +237,7 @@ All commands run with `data/notebook` as the working directory so that `src` is 
 
 ### 1. Train the included baseline and run inference
 
-From the repository root, first train and save a baseline model using the included labelled example dataset:
+From the repository root, train and run a baseline on the included **synthetic demonstration dataset** (not production data):
 
 ```bash
 cd data/notebook
@@ -250,7 +250,11 @@ Then execute model inference on the sample sensor data:
 from src.configs.inference import run_inference
 
 # Run inference on input data (CSV path, DataFrame, or dict)
-result = run_inference("data/raw/sensor_data.csv")
+result = run_inference(
+    "data/raw/sensor_data.csv",
+    apply_preprocessing=False,
+    apply_feature_engineering=False,
+)
 
 # Display formatted results summary
 result.display()
