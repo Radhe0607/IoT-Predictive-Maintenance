@@ -235,15 +235,22 @@ pip install -r requirements.txt
 
 All commands run with `data/notebook` as the working directory so that `src` is properly positioned on the Python path.
 
-### 1. High-Level Inference Pipeline
+### 1. Train the included baseline and run inference
 
-Execute end-to-end model inference on raw sensor data:
+From the repository root, first train and save a baseline model using the included labelled example dataset:
+
+```bash
+cd data/notebook
+python train_demo.py
+```
+
+Then execute model inference on the sample sensor data:
 
 ```python
 from src.configs.inference import run_inference
 
 # Run inference on input data (CSV path, DataFrame, or dict)
-result = run_inference("data/raw/sensor_readings.csv")
+result = run_inference("data/raw/sensor_data.csv")
 
 # Display formatted results summary
 result.display()
