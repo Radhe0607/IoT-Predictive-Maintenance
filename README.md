@@ -1,7 +1,7 @@
 # IoT Predictive Maintenance
 
-> **Enterprise-grade AI-driven predictive maintenance platform for industrial manufacturing.**
-> Converts raw IoT sensor telemetry streams into failure predictions, maintenance priorities, financial risk estimates, and actionable operational decisions.
+> **Runnable predictive-maintenance demo for exploring sensor-based failure scoring and maintenance-planning utilities.**
+> The included training workflow uses a synthetic dataset; business estimates are rule-based examples that require calibration before operational use.
 
 ---
 
@@ -24,6 +24,8 @@
 ---
 
 ## Executive Overview
+
+**Project status:** demo/prototype. The quick start trains a baseline on synthetic data. Priority, cost, downtime, and ROI outputs are estimates driven by configured rules and assumptions, not validated forecasts. The repository does not include a live sensor ingestion or alerting deployment. Validate the model and every business assumption against labeled historical data before using outputs to schedule maintenance or allocate budget.
 
 Traditional predictive maintenance implementations focus strictly on answering *"Will this machine fail?"* However, operational and maintenance engineering teams require answers to complex business questions before dispatching technicians:
 
