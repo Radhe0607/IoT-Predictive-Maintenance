@@ -4,6 +4,9 @@ Run from data/notebook:
     python train_demo.py
     python train_demo.py --data data/raw/sensor_data.csv --target failure
 """
+import argparse
+from pathlib import Path
+
 from src.configs.inference import run_inference
 from src.configs.models.baseline_model import BaselineModel
 from src.data.data_loader import DataLoader
