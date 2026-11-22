@@ -312,12 +312,38 @@ class BaselineModel:
         X = feature_df
         y = df[self.target_col]
 
-        n_classes = y.nunique()
+        if y.isna().any():
+            missing_count = int(y.isna().sum())
+            raise ValueError(
+                f"Target column '{self.target_col}' contains {missing_count} "
+                "missing value(s). Remove or label those rows before training."
+            )
+
+        class_counts = y.value_counts()
+        n_classes = len(class_counts)
         if n_classes < 2:
             raise ValueError(
                 f"Target column '{self.target_col}' must have at least 2 "
                 f"distinct classes, found {n_classes}."
             )
+        if class_counts.min() < 2:
+            raise ValueError(
+                f"Target column '{self.target_col}' needs at least 2 rows "
+                "for every class to create a stratified train/test split; "
+                f"observed counts: {class_counts.to_dict()}."
+            )
+
+        test_rows = int(np.ceil(len(y) * self.test_size))
+        train_rows = len(y) - test_rows
+        if min(train_rows, test_rows) < n_classes:
+            raise ValueError(
+                f"Dataset is too small for a stratified train/test split: "
+                f"{n_classes} classes require at least {n_classes} rows in "
+                f"each split, but test_size={self.test_size} gives "
+                f"{train_rows} train row(s) and {test_rows} test row(s). "
+                "Add more rows or adjust test_size."
+            )
+
         self._is_binary = (n_classes == 2)
 
         logger.info(
