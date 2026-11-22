@@ -248,6 +248,8 @@ python train_demo.py
 python train_demo.py --data data/raw/sensor_data.csv --target failure --model-dir models
 ```
 
+For custom CSVs, the target column must have no missing labels and enough examples of each class for both the training and test splits. The trainer reports a clear validation error when a dataset is too small or incomplete.
+
 Then execute model inference on the sample sensor data:
 
 ```python
