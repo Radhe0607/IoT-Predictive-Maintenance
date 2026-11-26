@@ -307,6 +307,12 @@ class BaselineModel:
         # Keep only numeric features (datetime / object cols cannot be
         # passed to sklearn without further encoding)
         feature_df = feature_df.select_dtypes(include=[np.number])
+        if feature_df.empty:
+            raise ValueError(
+                f"No numeric feature columns remain after excluding target "
+                f"'{self.target_col}'. Add at least one numeric sensor feature; "
+                "non-numeric columns are ignored."
+            )
         self.feature_names = list(feature_df.columns)
 
         X = feature_df
