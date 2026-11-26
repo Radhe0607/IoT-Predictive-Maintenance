@@ -17,6 +17,15 @@ class BaselineTargetValidationTests(unittest.TestCase):
             plots_dir=root / "plots",
         )
 
+    def test_rejects_datasets_without_numeric_sensor_features(self):
+        frame = pd.DataFrame({
+            "machine_type": ["lathe", "press", "lathe", "press"],
+            "failure": [0, 1, 0, 1],
+        })
+
+        with self.assertRaisesRegex(ValueError, "No numeric feature columns remain"):
+            self.model.train(frame)
+
     def test_rejects_missing_target_labels_with_actionable_message(self):
         frame = pd.DataFrame({
             "sensor": [0.1, 0.2, 0.3, 0.4],
